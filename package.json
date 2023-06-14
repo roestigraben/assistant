@@ -11,6 +11,14 @@
   "devDependencies": {
     "@nuxt/devtools": "latest",
     "@types/node": "^18",
-    "nuxt": "^3.5.2"
+    "nuxt": "^3.5.2",
+    "@nuxtjs/tailwindcss": "^6.2.0"
+  },
+  "dependencies": {
+    "@tailwindcss/typography": "^0.5.9",
+    "nuxt-icon": "^0.2.5",
+    "showdown-highlight": "^3.1.0",
+    "tailwind-highlightjs": "^2.0.1",
+    "vue-showdown": "^4.0.0"
   }
 }

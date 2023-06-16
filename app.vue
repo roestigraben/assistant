@@ -16,7 +16,8 @@
                   </div>
 
                   <div v-else
-                    class="relative h-[30px] w-[30px] p-1 rounded-sm text-white flex items-center justify-center bg-emerald-700">
+                    class="relative flex ">
+                    <Icon name="uil:trowel" class="bg-emerald-700 text-white" />
                   </div>
                 </div>
                 <div class="relative flex w-[calc(100%-50px)] md:flex-col lg:w-[calc(100%-115px)]">
@@ -67,9 +68,12 @@
 
 <style>
 .icon {
-  width: large;
-  height: large;
+  width: 2em;
+  height: 2em;
   margin-bottom: 0;
+}
+textarea:focus, input:focus{
+    outline: none;
 }
 </style>
 

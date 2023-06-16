@@ -66,7 +66,7 @@
 </template>
 
 <style>
-.icon svg{
+.icon {
   width: large;
   height: large;
   margin-bottom: 0;
@@ -115,29 +115,6 @@ const sendRequest = async () => {
   const newMessage = addMessage("AI", '');
   // console.log("new question : ==>  ", newMessage)
 
-  /* try {
-    const question = 'do you know Byteful?'
-    const history:[] = []
-    console.log('question : ', question)
-    console.log('history : ', history)
-
-
-    const response = await fetch('/api/chat', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        question,
-        history,
-      }),
-    });
-    const data = await response.json();
-    console.log('data', data);
-  } catch (error) {
-      
-      console.log('error', error);
-    } */
   // console.log('sent to gpt3.ts   : ', JSON.stringify(messages.value.slice(1)))
 
   const res = await fetch(`/api/gpt3`, {

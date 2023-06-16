@@ -27,10 +27,10 @@ export default defineEventHandler((event) => {
   return new Promise((resolve, reject) => {
     readBody(event).then(async (prevMessages) => {
       messages = messages.concat(prevMessages);
-      // console.log("messages in GPT3.ts       :", messages)
+      console.log("messages in GPT3.ts       :", messages)
 
-      const query = "was sind die Kompetenzen von Byteful?";
-      const namespace = "byteful"; //change this to your own vectorbase namespace
+      const query = messages.slice(-2)[0].message;
+      const namespace = "bytefulNew"; //change this to your own vectorbase namespace
 
       const context = await promptContextSearch(query, namespace);
       // console.log("the context    ==>  ", context);

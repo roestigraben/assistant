@@ -12,7 +12,7 @@
                 class="text-base gap-4 md:gap-6 m-auto md:max-w-2xl lg:max-w-2xl xl:max-w-3xl p-4 md:py-6 flex lg:px-0">
                 <div class="w-[30px] flex flex-col relative items-end">
                   <div v-if="message.actor === 'Human'" class="relative flex">
-                    <Icon name="uil:user" height="large" size="large" class="bg-indigo-300" />
+                    <Icon name="uil:user" class="bg-indigo-300" />
                   </div>
 
                   <div v-else
@@ -65,6 +65,14 @@
   </div>
 </template>
 
+<style>
+.icon svg{
+  width: large;
+  height: large;
+  margin-bottom: 0;
+}
+</style>
+
 <script setup lang="ts">
 // import { ref } from 'vue'
 // const config = useRuntimeConfig();
@@ -74,18 +82,6 @@
 const messages = ref([{
   actor: 'AI',
   message: 'Hello! How can I help you?',
-  loading: false
-},{
-  actor: 'Human',
-  message: 'are you a bot?',
-  loading: false
-},{
-  actor: 'AI',
-  message: 'I am an assistant to your personal data',
-  loading: false
-}, {
-  actor: 'Human',
-  message: 'thank you',
   loading: false
 }]);
 
@@ -114,13 +110,41 @@ const scrollToEnd = () => {
 };
 
 const sendRequest = async () => {
+  // console.log('messages  :  =====> ', messages.value)
   loading.value = true;
   const newMessage = addMessage("AI", '');
+  // console.log("new question : ==>  ", newMessage)
+
+  /* try {
+    const question = 'do you know Byteful?'
+    const history:[] = []
+    console.log('question : ', question)
+    console.log('history : ', history)
+
+
+    const response = await fetch('/api/chat', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        question,
+        history,
+      }),
+    });
+    const data = await response.json();
+    console.log('data', data);
+  } catch (error) {
+      
+      console.log('error', error);
+    } */
+  // console.log('sent to gpt3.ts   : ', JSON.stringify(messages.value.slice(1)))
 
   const res = await fetch(`/api/gpt3`, {
     body: JSON.stringify(messages.value.slice(1)),
     method: 'post'
   });
+
 
   const reader = res.body?.pipeThrough(new TextDecoderStream()).getReader();
 
@@ -143,7 +167,7 @@ const sendRequest = async () => {
         scrollToEnd();
       }
     });
-  }
+  } 
 }
 
 const submit = async () => {

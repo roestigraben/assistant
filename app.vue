@@ -26,6 +26,14 @@
                       class="min-h-[20px] flex flex-col items-start gap-4 whitespace-pre-wrap prose prose-gray dark:prose-invert prose-p:m-0 prose-pre:p-0 prose-pre:m-0 prose-li:my-0 prose-li:leading-none prose-ol:my-0">
                       <VueShowdown :markdown="addFullBlock(message.message, message.loading)"
                         :extensions="['highlight']" />
+                      <div v-if="message.actor === 'AI'" class="relative flex">
+                        <div v-if="message.docs.length != 0">
+                          <div v-for="doc in message.docs" style="font-size: 8px">
+                          {{ doc.metadata.source }}
+                          </div>
+                          
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -78,24 +86,26 @@ textarea:focus, input:focus{
 </style>
 
 <script setup lang="ts">
-// import { ref } from 'vue'
-// const config = useRuntimeConfig();
-// const Authorization =  `Bearer ${config.OPENAI_API_KEY}`
 
 
 const messages = ref([{
   actor: 'AI',
   message: 'Hello! How can I help you?',
-  loading: false
+  loading: false, 
+  docs: []
 }]);
 
 const message = ref<string>("")
 const loading = ref(false);
 const messageInput = ref<HTMLInputElement | null>(null)
 
-const addMessage = (actor: "AI" | "Human", message: string, loading: boolean = true) => {
-  const length = messages.value.push({ actor, message, loading });
+
+// add the new message to the array of messages
+const addMessage = (actor: "AI" | "Human", message: string, loading: boolean = true, docs?: any) => {
+  const length = messages.value.push({ actor, message, loading, docs:[] });
+  // if the page is full, ensure that you scroll in order to see the message
   scrollToEnd();
+  // return last message
   return messages.value[length - 1];
 };
 
@@ -114,24 +124,39 @@ const scrollToEnd = () => {
 };
 
 const sendRequest = async () => {
-  // console.log('messages  :  =====> ', messages.value)
   loading.value = true;
   const newMessage = addMessage("AI", '');
-  // console.log("new question : ==>  ", newMessage)
 
-  // console.log('sent to gpt3.ts   : ', JSON.stringify(messages.value.slice(1)))
-
-  const res = await fetch(`/api/gpt3`, {
-    body: JSON.stringify(messages.value.slice(1)),
+  // get the similar documents from the pinecone vector database
+  // console.log('sent to test.ts   : ', JSON.stringify(messages.value.slice(1)))
+  const docs:any = await $fetch(`/api/test`, {
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(messages.value.slice(1)), // the first message is the hello, so get rid of it
     method: 'post'
   });
+  
+  console.log('documents     : ', docs) 
+  
+  
+
+  // console.log('sent to gpt3.ts   : ', JSON.stringify(messages.value.slice(1)))
+  const res = await fetch(`/api/gpt3`, {
+    body: JSON.stringify(messages.value.slice(1)), // the first message is the hello, so get rid of it
+    method: 'post'
+  });
+
+  console.log("messages   :                ", messages.value)
+  
+  messages.value[messages.value.length -1].docs  = docs
+  
+  console.log('last message : ', messages.value.slice(-1))
 
 
   const reader = res.body?.pipeThrough(new TextDecoderStream()).getReader();
 
   while (true) {
     const result = await reader?.read();
-    console.log('Result', result);
+    // console.log('Result', result);
 
     if (result?.done) {
       loading.value = false;
@@ -151,9 +176,14 @@ const sendRequest = async () => {
   } 
 }
 
+// Button Click Action
 const submit = async () => {
   const newMessage = message.value;
+
+  // add the message to the array of messages
   addMessage("Human", newMessage, false);
+
+  // send the request to the model
   await sendRequest();
   message.value = "";
   messageInput.value?.focus();

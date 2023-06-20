@@ -35,13 +35,17 @@ export async function promptContextSearch(
   );
 
   var context = 'The context is as below: \n'
+  var sources: string[] = []
 
-  docs.forEach(doc => {
+  /* docs.forEach(doc => {
 
-    context += doc.pageContent +  '\n'
-    //console.log(doc.pageContent)
-  })
-  return context;
+    context += doc.pageContent + '\n'
+    // console.log(doc.pageContent)
+    // console.log('..........................')
+    // console.log(doc.metadata.source)
+    sources.push(doc.metadata.source)
+  }) */
+  return docs // [context, sources];
 }
 
 
@@ -77,7 +81,7 @@ export async function embedQuery(
   embeddings: OpenAIEmbeddings
 ): Promise<number[]> {
   const embeddedQuery = await embeddings.embedQuery(query);
-  console.log("embeddedQuery", embeddedQuery);
+  // console.log("embeddedQuery", embeddedQuery);
   return embeddedQuery;
 }
 //change the namespace to match your vectorbase
@@ -100,7 +104,7 @@ export async function similarityVectorSearch(
 
   if (results.matches) {
     for (const res of results.matches) {
-      console.log("res", res);
+      // console.log("res", res);
       const { text: pageContent, ...metadata } =
         res?.metadata as PineConeMetadata;
       if (res.score) {

@@ -8,7 +8,7 @@ const pinecone = new PineconeClient();
 export default defineEventHandler((event) => {
     const config = useRuntimeConfig();
 
-    const namespace = "bytefulNew"; //change this to your own vectorbase namespace
+    const namespace = `${process.env.PINECONE_NAME_SPACE}`; //change this to your own vectorbase namespace
 
     let messages: any = [];
 
@@ -18,6 +18,8 @@ export default defineEventHandler((event) => {
         readBody(event).then(async (prevMessages) => {
             messages = messages.concat(prevMessages);
             const query = messages.slice(-2)[0].message;
+
+
             const docs = await promptContextSearch(query, namespace);
 
             resolve(docs)
@@ -36,13 +38,19 @@ export default defineEventHandler((event) => {
         const index = pinecone.Index(`${process.env.PINECONE_INDEX_NAME}`);
         const question = query;
         const returnedResults = 3;
+
+        // QUERY EMBEDDING
         const questionEmbedding = await embedQuery(question, embeddings);
+
+        // SIMILARITY SEARCH
         const docs = await similarityVectorSearch(
             questionEmbedding,
             returnedResults,
             index,
             namespace
         );
+        console.log("should be on the server docs results ")
+        console.log(docs)
 
         return docs //[context, sources];
     }

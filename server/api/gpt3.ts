@@ -31,7 +31,7 @@ export default defineEventHandler((event) => {
       //
       // go get the most likely documents related to the question
       //
-      const namespace = "bytefulNew"; //change this to your own vectorbase namespace
+      const namespace = `${process.env.PINECONE_NAME_SPACE}`; //change this to your own vectorbase namespace
       const docs = await promptContextSearch(query, namespace);
 
       // add the most likely document to the prompt

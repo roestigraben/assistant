@@ -75,7 +75,13 @@ export async function callVectorDBQAChain(
   return result;
 }
 
-//vectorstore
+
+
+
+
+
+
+//  QUERY EMBEDDING
 export async function embedQuery(
   query: string,
   embeddings: OpenAIEmbeddings
@@ -84,7 +90,13 @@ export async function embedQuery(
   // console.log("embeddedQuery", embeddedQuery);
   return embeddedQuery;
 }
-//change the namespace to match your vectorbase
+
+
+
+
+
+
+//      SIMILARITY VECTOR SEARCH
 export async function similarityVectorSearch(
   vectorQuery: number[],
   k = 3,
@@ -100,18 +112,20 @@ export async function similarityVectorSearch(
     },
   });
 
-  const result: [Document, number][] = [];
+  const docs: any = [] //[Document, {}][] = [];
 
   if (results.matches) {
     for (const res of results.matches) {
-      // console.log("res", res);
-      const { text: pageContent, ...metadata } =
-        res?.metadata as PineConeMetadata;
+      console.log(res);
+      const { text: pageContent, ...metadata } = res?.metadata as PineConeMetadata;
+
       if (res.score) {
-        result.push([new Document({ metadata, pageContent }), res.score]);
+        docs.push({ metadata, pageContent, score: res.score })
       }
     }
   }
+  console.log(" =================================> ", docs)
+  console.log("*****************", docs[0])
 
-  return result.map((result) => result[0]);
+  return docs
 }

@@ -1,6 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  devtools: { enabled: true },
+  // devtools: { enabled: true },
   modules: ["@nuxtjs/tailwindcss", "nuxt-icon"],
   runtimeConfig: {
     OPENAI_API_KEY: process.env.OPENAI_API_KEY,
@@ -9,6 +9,7 @@ export default defineNuxtConfig({
     PINECONE_INDEX_NAME: process.env.PINECONE_INDEX_NAME,
     public: {
       apiBase: '/api'
+
     }
   },
 })

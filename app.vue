@@ -1,11 +1,12 @@
 <template>
+  
   <div class="light">
     <main
       class="absolute inset-0 transition-width flex flex-col overflow-hidden items-stretch flex-1 light:bg-gray-800 pb-20 md:pb-32">
       <div class="flex-1 overflow-hidden">
         <div class="h-full overflow-y-auto">
           <div class="flex flex-col items-center text-sm h-full chat-messages">
-            <div v-for="message in messages"
+            <div v-for="(message, index) in messages" :key="index"
               class="w-full border-b border-black/10 light:border-gray-900/50 text-gray-800 light:text-gray-100 group"
               :class="{ 'bg-gray-100': message.actor === 'Human', 'light:bg-gray-700': message.actor === 'AI' }">
               <div
@@ -14,27 +15,39 @@
                   <div v-if="message.actor === 'Human'" class="relative flex">
                     <Icon name="uil:user" class="bg-indigo-300" />
                   </div>
-
                   <div v-else
-                    class="relative flex ">
-                    <Icon name="uil:trowel" class="bg-emerald-700 text-white" />
+                    class="relative flex " >
+                    <Icon name="uil:trowel" class="bg-emerald-700 text-white" /> 
                   </div>
                 </div>
+
                 <div class="relative flex w-[calc(100%-50px)] md:flex-col lg:w-[calc(100%-115px)]">
+                  
                   <div class="flex flex-grow flex-col gap-3">
-                    <div
+                    <div  
                       class="min-h-[20px] flex flex-col items-start gap-4 whitespace-pre-wrap prose prose-gray dark:prose-invert prose-p:m-0 prose-pre:p-0 prose-pre:m-0 prose-li:my-0 prose-li:leading-none prose-ol:my-0">
                       <VueShowdown :markdown="addFullBlock(message.message, message.loading)"
                         :extensions="['highlight']" />
-                      <div v-if="message.actor === 'AI'" class="relative flex">
+                        
+                      
+                      <div v-if="message.actor === 'AI' && activeIndex === index" class="relative flex">
                         <div v-if="message.docs.length != 0">
-                          <div v-for="doc in message.docs" style="font-size: 8px">
-                          {{ doc.metadata.source }}
-                          </div>
+                          
+                          <carousel :items="message.docs" />
                           
                         </div>
                       </div>
                     </div>
+                  </div>
+                </div>
+                <div class="relative flex w-[calc(10%-0px)] md:flex-col lg:w-[calc(10%-5px)]">
+                  <div v-if="message.actor === 'AI' &&  message.docs.length != 0 && !loading" @click="toggleInfo(index)">
+                    <span v-if="activeIndex !== index">
+                      <Icon name="uil:info-circle" class="text-grey" />
+                    </span>
+                    <span v-else>
+                    <Icon name="uil:times-circle" class="text-grey" />
+                    </span>
                   </div>
                 </div>
               </div>
@@ -87,6 +100,15 @@ textarea:focus, input:focus{
 
 <script setup lang="ts">
 
+const activeIndex = ref(-1);
+
+function toggleInfo(index:number) {
+  if (activeIndex.value === index) {
+    activeIndex.value = -1;
+  } else {
+    activeIndex.value = index;
+  }
+}
 
 const messages = ref([{
   actor: 'AI',
@@ -101,7 +123,7 @@ const messageInput = ref<HTMLInputElement | null>(null)
 
 
 // add the new message to the array of messages
-const addMessage = (actor: "AI" | "Human", message: string, loading: boolean = true, docs?: any) => {
+const addMessage = (actor: "AI" | "Human", message: string, loading: boolean = true, docs?: Document) => {
   const length = messages.value.push({ actor, message, loading, docs:[] });
   // if the page is full, ensure that you scroll in order to see the message
   scrollToEnd();
@@ -129,7 +151,7 @@ const sendRequest = async () => {
 
   // get the similar documents from the pinecone vector database
   // console.log('sent to test.ts   : ', JSON.stringify(messages.value.slice(1)))
-  const docs:any = await $fetch(`/api/test`, {
+  const docs:any = await $fetch(`/api/test`, {        // [Document, number][]
     headers: {'Content-Type': 'application/json'},
     body: JSON.stringify(messages.value.slice(1)), // the first message is the hello, so get rid of it
     method: 'post'
@@ -145,11 +167,11 @@ const sendRequest = async () => {
     method: 'post'
   });
 
-  console.log("messages   :                ", messages.value)
   
+  // add the docs to the last answer
   messages.value[messages.value.length -1].docs  = docs
   
-  console.log('last message : ', messages.value.slice(-1))
+  // console.log('last message : ', messages.value.slice(-1))
 
 
   const reader = res.body?.pipeThrough(new TextDecoderStream()).getReader();

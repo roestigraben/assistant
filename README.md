@@ -65,3 +65,10 @@ Locally preview production build:
 # npm
 npm run preview
 ```
+
+
+# github setup
+
+git remote add origin https://github.com/roestigraben/assistant.git
+git branch -M main
+git push -u origin main

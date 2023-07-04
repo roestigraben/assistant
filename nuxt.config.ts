@@ -10,6 +10,7 @@ export default defineNuxtConfig({
     public: {
       apiBase: '/api'
 
-    }
+    },
+    target: 'static'
   },
 })

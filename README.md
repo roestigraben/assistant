@@ -1,5 +1,10 @@
 # Nuxt 3 Chatbot for Nuxt3
 
+
+# versions
+1.0 first deployed to netlify
+1.1 instead of using only the most relevant document in the prompt, we use the returned number of docuemnts defined by factor k (similarity search) 
+
 ## Objective
 
 a chatGPT variant that can use specific data that allows answers more tailored towards user questions.
@@ -72,3 +77,6 @@ npm run preview
 git remote add origin https://github.com/roestigraben/assistant.git
 git branch -M main
 git push -u origin main
+
+### push subsequent versions
+git push origin main 

@@ -34,8 +34,11 @@ export default defineEventHandler((event) => {
       const namespace = `${process.env.PINECONE_NAME_SPACE}`; //change this to your own vectorbase namespace
       const docs = await promptContextSearch(query, namespace);
 
-      // add the most likely document to the prompt
-      prompt += docs[0].pageContent
+      // get all docuemnts content map into the context and separate the items with a line feed
+      const context = docs.map((obj) => obj.pageContent);
+      context.join('  \n')
+
+      prompt += context // docs[0].pageContent -> this is tken into account only the most relevant docuemnt
 
 
       //

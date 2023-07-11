@@ -39,18 +39,22 @@ export default defineEventHandler((event) => {
         const question = query;
         const returnedResults = 3;
 
+        //
         // QUERY EMBEDDING
+        //
         const questionEmbedding = await embedQuery(question, embeddings);
 
+        //
         // SIMILARITY SEARCH
+        //
         const docs = await similarityVectorSearch(
             questionEmbedding,
             returnedResults,
             index,
             namespace
         );
-        console.log("should be on the server docs results ")
-        console.log(docs)
+        // console.log("should be on the server docs results ")
+        // console.log(docs)
 
         return docs //[context, sources];
     }

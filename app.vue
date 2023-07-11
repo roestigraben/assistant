@@ -26,15 +26,11 @@
                   <div class="flex flex-grow flex-col gap-3">
                     <div  
                       class="min-h-[20px] flex flex-col items-start gap-4 whitespace-pre-wrap prose prose-gray dark:prose-invert prose-p:m-0 prose-pre:p-0 prose-pre:m-0 prose-li:my-0 prose-li:leading-none prose-ol:my-0">
-                      <VueShowdown :markdown="addFullBlock(message.message, message.loading)"
-                        :extensions="['highlight']" />
+                      <VueShowdown :markdown="addFullBlock(message.message, message.loading)" :extensions="['highlight']" />
                         
-                      
                       <div v-if="message.actor === 'AI' && activeIndex === index" class="relative flex">
                         <div v-if="message.docs.length != 0">
-                          
                           <carousel :items="message.docs" />
-                          
                         </div>
                       </div>
                     </div>
@@ -81,7 +77,7 @@
 
 
       <div class="px-3 pt-2 pb-3 text-center text-xs text-black/50 dark:text-white/50 md:px-4 md:pt-3 md:pb-6"><a
-          href="https://beta.openai.com" target="_blank" rel="noreferrer" class="underline">based on OpenAI models augmented by enterprise data,
+          href="https://beta.openai.com" target="_blank" rel="noreferrer" class="underline">based on OpenAI models augmented by enterprise data, built by PH&Partners
           </a></div>
     </div>
   </div>
@@ -149,15 +145,17 @@ const sendRequest = async () => {
   loading.value = true;
   const newMessage = addMessage("AI", '');
 
+  //
   // get the similar documents from the pinecone vector database
   // console.log('sent to test.ts   : ', JSON.stringify(messages.value.slice(1)))
+  // 
   const docs:any = await $fetch(`/api/test`, {        // [Document, number][]
     headers: {'Content-Type': 'application/json'},
     body: JSON.stringify(messages.value.slice(1)), // the first message is the hello, so get rid of it
     method: 'post'
   });
   
-  console.log('documents     : ', docs) 
+  console.log('most similar documents     : ', docs) 
   
   
 

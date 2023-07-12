@@ -29,6 +29,7 @@
                       <VueShowdown :markdown="addFullBlock(message.message, message.loading)" :extensions="['highlight']" />
                         
                       <div v-if="message.actor === 'AI' && activeIndex === index" class="relative flex">
+                      
                         <div v-if="message.docs.length != 0">
                           <carousel :items="message.docs" />
                         </div>
@@ -65,7 +66,7 @@
             class="flex flex-col w-full py-2 flex-grow md:py-3 md:pl-4 relative border border-black/10 bg-white dark:border-gray-900/50 dark:text-white dark:bg-gray-700 rounded-md shadow-[0_0_10px_rgba(0,0,0,0.10)] dark:shadow-[0_0_15px_rgba(0,0,0,0.10)]">
             <textarea tabindex="0" v-model="message" @keydown.enter.exact.prevent="submit()" ref="messageInput"
               autofocus :disabled="loading" data-id="63ee3844-11f0-456d-b3b5-a6e2a3ac6a04" rows="1"
-              :class="{ 'text-gray-800': loading }" placeholder="Write your message here..."
+              :class="{ 'text-gray-800': loading }"
               class="m-0 w-full resize-none border-0 bg-transparent p-0 pl-2 pr-7 focus:ring-0 focus-visible:ring-0 dark:bg-transparent md:pl-0"
               style="max-height: 200px; overflow-y: scroll;" :style="{ height: (numOfLines * 24) + 'px' }"></textarea>
             <button @click.prevent="submit()" :disabled="loading"
@@ -155,6 +156,7 @@ const sendRequest = async () => {
     method: 'post'
   });
   
+  // print out on the client console
   console.log('most similar documents     : ', docs) 
   
   
@@ -203,7 +205,7 @@ const submit = async () => {
   // add the message to the array of messages
   addMessage("Human", newMessage, false);
 
-  // send the request to the model
+  // send the request to the model, reset the input text box and scroll to the input box
   await sendRequest();
   message.value = "";
   messageInput.value?.focus();

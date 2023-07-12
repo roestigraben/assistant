@@ -55,6 +55,10 @@ export default defineEventHandler((event) => {
         );
         // console.log("should be on the server docs results ")
         // console.log(docs)
+        docs.forEach(doc => {
+            // doc.pageContent.replace(/(\n|\r)/g, '')
+            doc.pageContent.replace(/\n\s*\n/g, '\n')
+        })
 
         return docs //[context, sources];
     }

@@ -26,32 +26,31 @@ export default defineEventHandler((event) => {
     readBody(event).then(async (prevMessages) => {
       messages = messages.concat(prevMessages);
 
-      const query = messages.slice(-2)[0].message;
-
       //
       // go get the most likely documents related to the question
       //
+      // take the last 2 messages and select the firt one of them which is the message with the question
+      const query = messages.slice(-2)[0].message;
       const namespace = `${process.env.PINECONE_NAME_SPACE}`; //change this to your own vectorbase namespace
       const docs = await promptContextSearch(query, namespace);
-
-      // get all docuemnts content map into the context and separate the items with a line feed
       const context = docs.map((obj) => obj.pageContent);
       context.join('  \n')
-
-      prompt += context // docs[0].pageContent -> this is tken into account only the most relevant docuemnt
-
+      prompt += context
 
       //
       // add the history
       //
-      prompt += "\n\n the history of the chat is here below:  \n"
+      prompt += "\n\nThe history of the chat is here below:\n"
+      // use only the last 4 (including the questions) messages in order to reduce token count
+      var last_messages = messages.slice(-6)
       // append message to prompt, taking message.actor as "actor:" followed by message.message
-      prompt +=
-        messages
-          .map((message: { actor: any; message: any; }) => `${message.actor}: ${message.message}`)
-          .join("\n"); // + `\nAI:`;
+      prompt += last_messages
+        .map((message: { actor: any; message: any; }) => `${message.actor}: ${message.message}`)
+      //.join("\n"); // + `\nAI:`;
 
+      console.log('********************* begin of prompt *************************')
       console.log(prompt)
+      console.log('********************* end of prompt *************************')
 
 
       const req = https.request(
@@ -66,7 +65,7 @@ export default defineEventHandler((event) => {
           },
         },
         (res) => {
-          console.log("Got response from GPT-3");
+          // console.log("Got response from GPT-3");
           event.node.res.setHeader("Content-Type", "text/event-stream");
           resolve(res.pipe(transform));
         }

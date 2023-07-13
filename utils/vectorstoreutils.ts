@@ -68,9 +68,9 @@ export async function callVectorDBQAChain(
   const qaChain = loadQAChain(llm, {
     type: "stuff",
   });
-  console.log("qachain", qaChain);
+  // console.log("qachain", qaChain);
   const result = await qaChain.call(inputs);
-  console.log("result", result);
+  // console.log("result", result);
 
   return result;
 }
@@ -116,7 +116,7 @@ export async function similarityVectorSearch(
 
   if (results.matches) {
     for (const res of results.matches) {
-      console.log(res);
+      // console.log(res);
       const { text: pageContent, ...metadata } = res?.metadata as PineConeMetadata;
 
       if (res.score) {
@@ -124,8 +124,8 @@ export async function similarityVectorSearch(
       }
     }
   }
-  console.log(" =================================> ", docs)
-  console.log("*****************", docs[0])
+  // console.log(" =================================> ", docs)
+  // console.log("*****************", docs[0])
 
   return docs
 }

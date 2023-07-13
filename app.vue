@@ -148,7 +148,7 @@ const sendRequest = async () => {
 
   //
   // get the similar documents from the pinecone vector database
-  // console.log('sent to test.ts   : ', JSON.stringify(messages.value.slice(1)))
+  console.log('sent to test.ts   : ', JSON.stringify(messages.value.slice(1)))
   // 
   const docs:any = await $fetch(`/api/test`, {        // [Document, number][]
     headers: {'Content-Type': 'application/json'},
